@@ -18,7 +18,7 @@ export async function GET(req: Request, { params }: Context) {
     } else {
       return NextResponse.json({ error: 'Short URL not found' }, { status: 404 });
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
