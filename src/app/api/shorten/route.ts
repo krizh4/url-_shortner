@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(newUrl);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to create short URL' }, { status: 500 });
   }
 }
