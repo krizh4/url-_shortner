@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ShortUrl {
+model shorturl {
   id        String @id @default(cuid())
   original  String @unique
   short     String @unique

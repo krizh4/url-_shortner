@@ -1,24 +1,31 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+const prisma = await new PrismaClient();
 
-interface Context {
-  params: { short: string };
-}
-
-export async function GET(req: Request, { params }: Context) {
+export async function GET(
+  req: Request,
+  props: {params: Promise<{ short: string }>}) {
+  const params = await props.params;
+  console.log(params);
   try {
-    const urlEntry = await prisma.shortUrl.findUnique({
-      where: { short: params.short }
+    if (!params || !params.short) {
+      return NextResponse.json({ error: 'Missing URL parameter' }, { status: 400 });
+    }
+
+    const short = params.short; // Safely extract the short param
+
+    const urlEntry = await prisma.shorturl.findUnique({
+      where: { short },
     });
 
-    if (urlEntry) {
-      return NextResponse.redirect(urlEntry.original);
-    } else {
+    if (!urlEntry) {
       return NextResponse.json({ error: 'Short URL not found' }, { status: 404 });
     }
-  } catch {
+
+    return NextResponse.redirect(urlEntry.original); // Redirect to the original URL
+  } catch (error) {
+    console.error('Error fetching short URL:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

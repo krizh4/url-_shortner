@@ -5,9 +5,11 @@ import { useState } from 'react';
 export default function Home() {
   const [originalUrl, setOriginalUrl] = useState('');
   const [shortUrl, setShortUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true)
 
     const response = await fetch('/api/shorten', {
       method: 'POST',
@@ -16,6 +18,8 @@ export default function Home() {
     });
 
     const data = await response.json();
+    setIsLoading(false)
+
     if (response.ok) {
       setShortUrl(`${window.location.origin}/api/${data.short}`);
     } else {
@@ -35,10 +39,12 @@ export default function Home() {
           className="p-2 border rounded"
           required
         />
-        <button type="submit" className="p-2 ml-2 bg-blue-500 text-white rounded">
-          Shorten
+        <button type="submit" disabled={isLoading} className="p-2 ml-2 bg-blue-500 text-white rounded">
+          {isLoading ? 'Loading...' : 'Shorten'}
         </button>
       </form>
+      {isLoading && (<div className="w-10 h-10 border-4 border-gray-300 border-t-black rounded-full animate-spin"></div>
+)}
       {shortUrl && (
         <p className="mt-4">
           Shortened URL: <a href={shortUrl} className="text-blue-500">{shortUrl}</a>

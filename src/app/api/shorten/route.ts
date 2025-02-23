@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const short = Math.random().toString(36).substring(7);
 
     // Store in database
-    const newUrl = await prisma.shortUrl.create({
+    const newUrl = await prisma.shorturl.create({
       data: { original: originalUrl, short }
     });
 
